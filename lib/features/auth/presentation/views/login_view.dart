@@ -1,5 +1,5 @@
-import 'package:attendance_app/features/auth/views/widgets/custom_text_field.dart';
-import 'package:attendance_app/features/auth/views/widgets/text_field_validation.dart';
+import 'package:attendance_appp/features/auth/presentation/views/widgets/custom_text_field.dart';
+import 'package:attendance_appp/features/auth/presentation/views/widgets/text_field_validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,8 +21,9 @@ class _LoginViewState extends State<LoginView> {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: isDarkMode ? const Color(0xff161d38) : Colors.white,
-        statusBarIconBrightness:
-            isDarkMode ? Brightness.light : Brightness.dark, // Icon color
+        statusBarIconBrightness: isDarkMode
+            ? Brightness.light
+            : Brightness.dark, // Icon color
       ),
     );
 
