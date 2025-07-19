@@ -2,6 +2,7 @@ import 'package:attendance_appp/bottom_navigation_widget.dart';
 import 'package:attendance_appp/features/atten_history/presentation/views/attendance_history.dart';
 import 'package:attendance_appp/features/auth/presentation/views/login_view.dart';
 import 'package:attendance_appp/features/home/presentation/views/home_view.dart';
+import 'package:attendance_appp/features/location/presentation/views/check_location_view.dart';
 import 'package:attendance_appp/features/notifications/presentation/views/notifications_view.dart';
 import 'package:attendance_appp/features/user/presentaion/views/user_view.dart';
 import 'package:go_router/go_router.dart';
@@ -70,6 +71,10 @@ abstract class AppRouter {
       ),
 
       GoRoute(path: kLoginView, builder: (context, state) => const LoginView()),
+      GoRoute(
+        path: kLocationView,
+        builder: (context, state) => const CheckLocationView(),
+      ),
 
       // GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),
       // GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),

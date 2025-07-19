@@ -1,10 +1,8 @@
 import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(const MainApp());
 }
 
