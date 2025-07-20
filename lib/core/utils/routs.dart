@@ -1,6 +1,8 @@
 import 'package:attendance_appp/bottom_navigation_widget.dart';
 import 'package:attendance_appp/features/atten_history/presentation/views/attendance_history.dart';
 import 'package:attendance_appp/features/auth/presentation/views/login_view.dart';
+import 'package:attendance_appp/features/faceId/presentation/views/face_id_view.dart';
+import 'package:attendance_appp/features/faceId/presentation/views/success_view.dart';
 import 'package:attendance_appp/features/home/presentation/views/home_view.dart';
 import 'package:attendance_appp/features/location/presentation/views/check_location_view.dart';
 import 'package:attendance_appp/features/notifications/presentation/views/notifications_view.dart';
@@ -75,14 +77,14 @@ abstract class AppRouter {
         path: kLocationView,
         builder: (context, state) => const CheckLocationView(),
       ),
-
-      // GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),
-      // GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),
-      // GoRoute(
-      //   path: kNotificationsView,
-      //   builder: (context, state) => const NotificationsView(),
-      // ),
-      // GoRoute(path: kUserView, builder: (context, state) => const UserView()),
+      GoRoute(
+        path: kFaceIdView,
+        builder: (context, state) => const FaceRecognitionView(),
+      ),
+      GoRoute(
+        path: kSuccessView,
+        builder: (context, state) => const SuccessView(),
+      ),
     ],
   );
 }

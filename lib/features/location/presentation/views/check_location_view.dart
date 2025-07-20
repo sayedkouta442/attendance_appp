@@ -21,10 +21,10 @@ class _CheckLocationViewState extends State<CheckLocationView> {
   final Location _location = Location();
   bool isLoading = true;
   LatLng? _currentLocation;
-  final LatLng _tantaCollege = const LatLng(
-    30.7925,
-    31.0019,
-  ); // Fixed destination
+  // final LatLng _tantaCollege = const LatLng(
+  //   30.7925,
+  //   31.0019,
+  // ); // Fixed destination
   // LatLng? _destination;
   // List<LatLng> _route = [];
   StreamSubscription<LocationData>? _locationSubscription;
@@ -185,7 +185,8 @@ class _CheckLocationViewState extends State<CheckLocationView> {
                 if (result == true) {
                   setState(() => isAttended = true);
 
-                  GoRouter.of(context).go(AppRouter.kFaceIdView);
+                  // ignore: use_build_context_synchronously
+                  GoRouter.of(context).push(AppRouter.kFaceIdView);
                 }
               },
               child: const SizedBox(
