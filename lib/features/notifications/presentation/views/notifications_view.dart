@@ -5,6 +5,14 @@ class NotificationsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(title: const Text('Notifications'), centerTitle: true),
+      body: Center(
+        child: Text(
+          'No notifications at the moment.',
+          style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+        ),
+      ),
+    );
   }
 }

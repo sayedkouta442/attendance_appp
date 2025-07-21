@@ -42,10 +42,9 @@ class BottomNavigation extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
-                color:
-                    isDarkMode
-                        ? Colors.white.withOpacity(0.05)
-                        : Colors.black.withOpacity(0.05),
+                color: isDarkMode
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.black.withOpacity(0.05),
                 width: 1,
               ),
             ),
@@ -57,10 +56,9 @@ class BottomNavigation extends StatelessWidget {
               elevation: 80,
               type: BottomNavigationBarType.fixed,
               selectedItemColor: const Color(0xff4e80c3),
-              unselectedItemColor:
-                  isDarkMode
-                      ? Colors.white.withOpacity(0.6)
-                      : Colors.black.withOpacity(0.6),
+              unselectedItemColor: isDarkMode
+                  ? Colors.white.withOpacity(0.6)
+                  : Colors.black.withOpacity(0.6),
               showUnselectedLabels: true,
 
               // The current index is now driven by the navigation shell.
@@ -76,12 +74,12 @@ class BottomNavigation extends StatelessWidget {
                   tooltip: 'Home',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.bookmark_outline),
+                  icon: Icon(Icons.history_toggle_off_outlined),
                   label: '',
-                  tooltip: 'Leave Reques',
+                  tooltip: 'Attendance History',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.outbond),
+                  icon: Icon(Icons.notifications),
                   label: '',
                   tooltip: 'Notifications',
                 ),

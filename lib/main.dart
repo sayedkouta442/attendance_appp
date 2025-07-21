@@ -1,8 +1,17 @@
+import 'package:attendance_appp/core/common/api_keys.dart';
 import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: ApiKeys.supabaseUrl,
+    anonKey: ApiKeys.supabaseAnonKey,
+  );
+
   runApp(const MainApp());
 }
 

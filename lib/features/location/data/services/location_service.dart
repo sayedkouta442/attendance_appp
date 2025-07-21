@@ -23,8 +23,8 @@ class AttendanceService {
     final currentMinutes = currentTime.hour * 60 + currentTime.minute;
 
     // Attendance window: 9:00 AM to 9:30 AM (540 to 570 minutes)
-    const int attendanceStart = 8 * 60; // 540 minutes //9 *60
-    const int attendanceEnd = 23 * 60 + 55; // 570 minutes // 9 * 60 + 30
+    const int attendanceStart = 0 * 60; // 540 minutes //9 *60
+    const int attendanceEnd = 23 * 60 + 59; // 570 minutes // 9 * 60 + 30
 
     if (currentMinutes < attendanceStart) {
       _showMessage(context, "⏰ It's too early for attendance.");

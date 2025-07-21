@@ -1,4 +1,6 @@
+import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class RequestButton extends StatelessWidget {
   const RequestButton({super.key});
@@ -26,7 +28,9 @@ class RequestButton extends StatelessWidget {
         ),
       ),
 
-      onPressed: () {},
+      onPressed: () {
+        GoRouter.of(context).push(AppRouter.kLeaveView);
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

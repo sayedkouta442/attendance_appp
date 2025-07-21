@@ -1,7 +1,12 @@
+import 'package:attendance_appp/core/utils/routs.dart';
+import 'package:attendance_appp/features/auth/presentation/view_model/auth_cubit/auth_cubit.dart';
 import 'package:attendance_appp/features/auth/presentation/views/widgets/custom_text_field.dart';
 import 'package:attendance_appp/features/auth/presentation/views/widgets/text_field_validation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -14,18 +19,19 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  void _validateAndSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthCubit>().signinWithEmail(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: isDarkMode ? const Color(0xff161d38) : Colors.white,
-        statusBarIconBrightness: isDarkMode
-            ? Brightness.light
-            : Brightness.dark, // Icon color
-      ),
-    );
 
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xff161d38) : Colors.white,
@@ -76,35 +82,47 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 34),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  minimumSize: const Size(200, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Perform login action here
-                    // For example, you can navigate to another screen or show a success message
+              BlocConsumer<AuthCubit, AutheState>(
+                listener: (context, state) async {
+                  if (state is AuthLoading) {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          const Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (state is AuthSuccess) {
+                    Navigator.pop(context); // Close the loading dialog
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool('requirePostSignupLogin', false);
+                    GoRouter.of(context).go(AppRouter.kHomeView);
+                  } else if (state is AuthFailure) {
+                    Navigator.pop(context); // Close the loading dialog
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Login Successful'),
-                        backgroundColor: Colors.green,
+                      SnackBar(
+                        content: Text(state.error),
+                        backgroundColor: Colors.red,
                       ),
                     );
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const MapScreen()),
-                    // );
                   }
                 },
-                child: const Text(
-                  'Login',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
+                builder: (context, state) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      minimumSize: const Size(200, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      _validateAndSubmit();
+                    },
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  );
+                },
               ),
             ],
           ),
