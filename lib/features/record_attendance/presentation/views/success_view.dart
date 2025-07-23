@@ -1,5 +1,7 @@
+import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:attendance_appp/features/home/presentation/views/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SuccessView extends StatelessWidget {
   // final String employeeName;
@@ -17,7 +19,11 @@ class SuccessView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Attendance Confirmation"),
+        centerTitle: true,
+        title: const Text(
+          "Attendance Confirmation",
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
         backgroundColor: Colors.green,
         automaticallyImplyLeading: false, // Remove back button
       ),
@@ -70,6 +76,7 @@ class SuccessView extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -116,13 +123,12 @@ class SuccessView extends StatelessWidget {
             // Return to map button
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                GoRouter.of(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeView()),
-                ); // Return to map screen
+                ).go(AppRouter.kHomeView); // Return to map screen
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 30,
                   vertical: 15,

@@ -4,11 +4,17 @@ import 'package:attendance_appp/features/auth/data/data_sources/auth_remote_data
 import 'package:attendance_appp/features/auth/data/repos_imple/repos_impl.dart';
 import 'package:attendance_appp/features/auth/presentation/view_model/auth_cubit/auth_cubit.dart';
 import 'package:attendance_appp/features/auth/presentation/views/login_view.dart';
-import 'package:attendance_appp/features/faceId/presentation/views/face_id_view.dart';
-import 'package:attendance_appp/features/faceId/presentation/views/success_view.dart';
+import 'package:attendance_appp/features/record_attendance/data/data_sources/attendance_remote_data_source.dart';
+import 'package:attendance_appp/features/record_attendance/data/repos_impl/record_attendance_repo_impl.dart';
+import 'package:attendance_appp/features/record_attendance/presentation/view_model/cubit/record_attendance_cubit.dart';
+import 'package:attendance_appp/features/record_attendance/presentation/views/face_recognition_view.dart';
+import 'package:attendance_appp/features/record_attendance/presentation/views/success_view.dart';
 import 'package:attendance_appp/features/home/presentation/views/home_view.dart';
-import 'package:attendance_appp/features/location/presentation/views/check_location_view.dart';
+import 'package:attendance_appp/features/record_attendance/presentation/views/check_location_view.dart';
 import 'package:attendance_appp/features/notifications/presentation/views/notifications_view.dart';
+import 'package:attendance_appp/features/user/data/apis/user_remote_data_source.dart';
+import 'package:attendance_appp/features/user/data/repos/user_repo_impl.dart';
+import 'package:attendance_appp/features/user/presentation/view_models/cubit/user_cubit.dart';
 import 'package:attendance_appp/features/user/presentation/views/leave_view.dart';
 import 'package:attendance_appp/features/user/presentation/views/user_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,7 +99,12 @@ abstract class AppRouter {
               GoRoute(
                 path: kUserView,
                 builder: (context, state) {
-                  return UserView();
+                  return BlocProvider(
+                    create: (context) => UserCubit(
+                      UserRepoImpl(UserRemoteDataSourceImpl())..fetchUserData(),
+                    ),
+                    child: UserView(),
+                  );
                 },
               ),
             ],
@@ -115,7 +126,12 @@ abstract class AppRouter {
       ),
       GoRoute(
         path: kFaceIdView,
-        builder: (context, state) => const FaceRecognitionView(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => RecordAttendanceCubit(
+            RecordAttendanceRepoImpl(RecordAttendanceRemoteDataSourceImpl()),
+          ),
+          child: const FaceRecognitionView(),
+        ),
       ),
       GoRoute(
         path: kSuccessView,

@@ -1,8 +1,10 @@
 import 'dart:io';
-import 'dart:typed_data';
+
 import 'dart:math' as math;
+import 'package:attendance_appp/features/record_attendance/data/data_sources/attendance_remote_data_source.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart'
     as ml_kit;
 
@@ -10,19 +12,8 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart'
 import 'package:path_provider/path_provider.dart';
 import '../models/face_model.dart';
 
-class FaceService {
-  final List<String> _referenceImagePaths = [
-    // 'assets/images/photo.jpg',
-    // 'assets/images/photo2.jpg',
-    // 'assets/images/photo3.jpg',
-    // 'assets/images/photo4.jpg',
-    'assets/images/p1.jpg',
-    'assets/images/p2.jpeg',
-    'assets/images/p3.jpeg',
-    'assets/images/p5.jpg',
-    //'assets/images/p7.jpg',
-  ];
-
+class FaceRecognitionService {
+  final RecordAttendanceRemoteDataSourceImpl attendanceImage;
   final ml_kit.FaceDetector _faceDetector = ml_kit.FaceDetector(
     options: ml_kit.FaceDetectorOptions(
       enableClassification: true,
@@ -35,67 +26,74 @@ class FaceService {
   List<FaceModel> _referenceFaces = [];
   bool _isInitialized = false;
 
+  FaceRecognitionService(this.attendanceImage);
+
   Future<void> initialize() async {
     if (_isInitialized) return;
 
     _referenceFaces = [];
 
-    for (String path in _referenceImagePaths) {
-      try {
-        final ByteData data = await rootBundle.load(path);
-        final Uint8List bytes = data.buffer.asUint8List();
+    final imageUrl = await attendanceImage.fetchUserImageUrl();
+    if (imageUrl == null) {
+      print('No face image found for user$imageUrl');
+      return;
+    }
+    try {
+      final httpClient = HttpClient();
+      final request = await httpClient.getUrl(Uri.parse(imageUrl));
+      final response = await request.close();
+      final bytes = await consolidateHttpClientResponseBytes(response);
 
-        // Write to temp file
-        final tempDir = await getTemporaryDirectory();
-        final tempFile = File('${tempDir.path}/${path.split('/').last}');
-        await tempFile.writeAsBytes(bytes);
+      // Write to temp file
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File('${tempDir.path}/${imageUrl.split('/').last}');
+      await tempFile.writeAsBytes(bytes);
 
-        final inputImage = ml_kit.InputImage.fromFilePath(tempFile.path);
+      final inputImage = ml_kit.InputImage.fromFilePath(tempFile.path);
 
-        final List<ml_kit.Face> faces = await _faceDetector.processImage(
-          inputImage,
+      final List<ml_kit.Face> faces = await _faceDetector.processImage(
+        inputImage,
+      );
+
+      if (faces.isNotEmpty) {
+        final ml_kit.Face detectedFace = faces.first;
+
+        final FaceModel faceModel = FaceModel(
+          id: _referenceFaces.length,
+          boundingBox: detectedFace.boundingBox,
+          landmarks: {
+            FaceLandmarkType.leftEye: _getLandmarkPosition(
+              detectedFace,
+              ml_kit.FaceLandmarkType.leftEye,
+            ),
+            FaceLandmarkType.rightEye: _getLandmarkPosition(
+              detectedFace,
+              ml_kit.FaceLandmarkType.rightEye,
+            ),
+            FaceLandmarkType.nose: _getLandmarkPosition(
+              detectedFace,
+              ml_kit.FaceLandmarkType.noseBase,
+            ),
+            FaceLandmarkType.bottomMouth: _getLandmarkPosition(
+              detectedFace,
+              ml_kit.FaceLandmarkType.bottomMouth,
+            ),
+            FaceLandmarkType.leftCheek: _getLandmarkPosition(
+              detectedFace,
+              ml_kit.FaceLandmarkType.leftCheek,
+            ),
+            FaceLandmarkType.rightCheek: _getLandmarkPosition(
+              detectedFace,
+              ml_kit.FaceLandmarkType.rightCheek,
+            ),
+          },
+          imagePath: imageUrl,
         );
 
-        if (faces.isNotEmpty) {
-          final ml_kit.Face detectedFace = faces.first;
-
-          final FaceModel faceModel = FaceModel(
-            id: _referenceFaces.length,
-            boundingBox: detectedFace.boundingBox,
-            landmarks: {
-              FaceLandmarkType.leftEye: _getLandmarkPosition(
-                detectedFace,
-                ml_kit.FaceLandmarkType.leftEye,
-              ),
-              FaceLandmarkType.rightEye: _getLandmarkPosition(
-                detectedFace,
-                ml_kit.FaceLandmarkType.rightEye,
-              ),
-              FaceLandmarkType.nose: _getLandmarkPosition(
-                detectedFace,
-                ml_kit.FaceLandmarkType.noseBase,
-              ),
-              FaceLandmarkType.bottomMouth: _getLandmarkPosition(
-                detectedFace,
-                ml_kit.FaceLandmarkType.bottomMouth,
-              ),
-              FaceLandmarkType.leftCheek: _getLandmarkPosition(
-                detectedFace,
-                ml_kit.FaceLandmarkType.leftCheek,
-              ),
-              FaceLandmarkType.rightCheek: _getLandmarkPosition(
-                detectedFace,
-                ml_kit.FaceLandmarkType.rightCheek,
-              ),
-            },
-            imagePath: path,
-          );
-
-          _referenceFaces.add(faceModel);
-        }
-      } catch (e) {
-        print('Error processing reference image $path: $e');
+        _referenceFaces.add(faceModel);
       }
+    } catch (e) {
+      print('Error processing reference image $imageUrl: $e');
     }
 
     _isInitialized = true;
@@ -175,9 +173,9 @@ class FaceService {
           referenceFace,
         );
 
-        const double SIMILARITY_THRESHOLD = 0.8;
+        const double similarityThreshold = 0.8; //
 
-        if (similarity > SIMILARITY_THRESHOLD &&
+        if (similarity > similarityThreshold &&
             similarity > bestMatch.confidence) {
           bestMatch = FaceRecognitionResult(
             success: true,

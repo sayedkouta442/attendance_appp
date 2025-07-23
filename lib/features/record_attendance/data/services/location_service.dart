@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
-class AttendanceService {
+class LocationService {
   final Location _location = Location();
-  final LatLng officeLocation = const LatLng(
-    30.8482503, //30.7887,
-    31.2355107, //30.9956,
-  ); // Tanta College location
+  final LatLng officeLocation = const LatLng(30.7860, 31.0009);
+
+  fetchLatLng() async {
+    final userLocation = await _location.getLocation();
+    return LatLng(userLocation.latitude!, userLocation.longitude!);
+  }
 
   Future<bool> takeAttendance(BuildContext context) async {
     final now = DateTime.now();
@@ -48,6 +50,7 @@ class AttendanceService {
 
     final userLocation = await _location.getLocation();
     final userLatLng = LatLng(userLocation.latitude!, userLocation.longitude!);
+    // fetchLatLng();
 
     final distance = const Distance().as(
       LengthUnit.Meter,
@@ -71,13 +74,6 @@ class AttendanceService {
       );
       return false;
     }
-
-    // For testing, always return true to allow face verification
-    // _showMessage(
-    //   context,
-    //   "✅ Location verified! Proceeding to face verification.",
-    // );
-    // return true;
   }
 
   void _showMessage(BuildContext context, String message) {

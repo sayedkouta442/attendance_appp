@@ -1,6 +1,9 @@
 import 'package:attendance_appp/core/utils/constants.dart';
 import 'package:attendance_appp/core/utils/routs.dart';
+import 'package:attendance_appp/features/user/presentation/view_models/cubit/user_cubit.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class UserView extends StatefulWidget {
@@ -12,6 +15,12 @@ class UserView extends StatefulWidget {
 
 class _UserViewState extends State<UserView> {
   @override
+  void initState() {
+    context.read<UserCubit>().fetchUserData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
@@ -21,28 +30,73 @@ class _UserViewState extends State<UserView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // User avatar and name
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage(
-                'assets/images/p5.jpg',
-              ), // Replace with your image
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Mohamed Ali',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'Flutter Developer - Tech Department',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const Divider(height: 32),
+            BlocBuilder<UserCubit, UserState>(
+              builder: (context, state) {
+                if (state is UserFailure) {
+                  return Center(
+                    child: Text(
+                      state.errMessage,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else if (state is UserSuccess) {
+                  final user = state.user;
+                  final formattedDate = user.joinDate
+                      .toLocal()
+                      .toString()
+                      .split(' ')[0];
+                  print('User data fetched: ${user.fullName}');
+                  return Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        child: CachedNetworkImage(
+                          imageBuilder: (context, imageProvider) =>
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: imageProvider,
+                              ),
+                          fit: BoxFit.cover,
+                          imageUrl: user.imageUrl ?? '',
+                          errorWidget: (context, url, error) {
+                            return CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.grey[300],
+                              child: const Icon(Icons.person, size: 50),
+                            );
+                          },
+                          placeholder: (context, url) => const CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        user.fullName,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${user.jobTitle} - ${user.department}',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      const Divider(height: 32),
 
-            // User info
-            _buildInfoTile(title: 'Email', value: 'mohamed@example.com'),
-            _buildInfoTile(title: 'Phone', value: '01000000000'),
-            _buildInfoTile(title: 'Join Date', value: '2023-04-01'),
-            _buildInfoTile(title: 'Branch', value: 'Cairo'),
+                      // User info
+                      _buildInfoTile(title: 'Email', value: user.email),
+                      _buildInfoTile(title: 'Phone', value: user.phoneNumber),
+                      _buildInfoTile(title: 'Join Date', value: formattedDate),
+                      _buildInfoTile(title: 'Branch', value: user.branch),
+                    ],
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
 
             const Divider(height: 32),
 

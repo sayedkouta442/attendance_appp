@@ -15,26 +15,33 @@ class HomeView extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            automaticallyImplyLeading: false,
             systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarColor: Color(0xff3662e1),
               statusBarIconBrightness: Brightness.light,
             ),
-            expandedHeight: 440,
+            expandedHeight: 460,
             pinned: true,
+            floating: false,
+            snap: false,
+            stretch: true,
             backgroundColor: Color(0xffeef0f2),
-            flexibleSpace: FlexibleSpaceBar(background: CustomAppBar()),
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
+              background: CustomAppBar(),
+            ),
           ),
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AttendanceThisMonth(),
                   SizedBox(height: 24),
                   MonthAttendanceCount(),
-                  SizedBox(height: 60),
+                  SizedBox(height: 30),
                   RequestButton(),
                 ],
               ),

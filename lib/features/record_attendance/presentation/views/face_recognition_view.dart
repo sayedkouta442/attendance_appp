@@ -1,9 +1,17 @@
 import 'dart:io';
+import 'package:attendance_appp/core/utils/constants.dart';
 import 'package:attendance_appp/core/utils/routs.dart';
-import 'package:attendance_appp/features/faceId/data/services/face_id_service.dart';
+import 'package:attendance_appp/features/record_attendance/data/data_sources/attendance_remote_data_source.dart';
+import 'package:attendance_appp/features/record_attendance/data/models/record_attendance.dart';
+import 'package:attendance_appp/features/record_attendance/data/services/face_recognition_service.dart';
+import 'package:attendance_appp/features/record_attendance/data/services/location_service.dart';
+import 'package:attendance_appp/features/record_attendance/presentation/view_model/cubit/record_attendance_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:path_provider/path_provider.dart';
 // import 'package:path/path.dart' as path;
@@ -20,7 +28,9 @@ class _FaceRecognitionViewState extends State<FaceRecognitionView> {
   CameraController? controller;
   bool isCameraInitialized = false;
   bool isProcessing = false;
-  FaceService faceService = FaceService();
+  FaceRecognitionService faceService = FaceRecognitionService(
+    RecordAttendanceRemoteDataSourceImpl(),
+  );
 
   @override
   void initState() {
@@ -93,13 +103,63 @@ class _FaceRecognitionViewState extends State<FaceRecognitionView> {
       );
 
       final result = await faceService.compareFace(imageFile);
-
+      ///////////////////////////////////////////////////////////////////////////////
       if (result.success && result.confidence >= 0.75) {
+        final now = DateTime.now();
+        final location = await LocationService().fetchLatLng();
+
+        // Define your cutoff time for lateness (e.g., 10:30 AM)
+        final lateCutoff = DateTime(now.year, now.month, now.day, 10, 30);
+        final attendanceStatus = now.isBefore(lateCutoff)
+            ? AttendanceStatus.present
+            : AttendanceStatus.late;
+        //check if checkedIn or not
+        final prefs = await SharedPreferences.getInstance();
+        //  prefs.get('checkedIn');
+
+        if (prefs.getBool('checkedIn') == true) {
+          // update attendance record
+          final record = AttendanceRecordModel(
+            employeeId: userId,
+            checkOutTime: now,
+            checkOutLocationLat: location?.latitude,
+            checkOutLocationLon: location?.longitude,
+          );
+
+          // ignore: use_build_context_synchronously
+          await context.read<RecordAttendanceCubit>().updateRecordAttendance(
+            record,
+          );
+
+          await prefs.setBool('checkedIn', false);
+          print(
+            'Updated*********DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD',
+          );
+          GoRouter.of(context).push(AppRouter.kSuccessView);
+
+          return;
+        }
+
+        final record = AttendanceRecordModel(
+          employeeId: userId,
+          status: attendanceStatus,
+          checkInTime: now,
+          recordDate: now,
+          checkInLocationLat: location?.latitude,
+          checkInLocationLon: location?.longitude,
+        );
         // ignore: use_build_context_synchronously
+        await context.read<RecordAttendanceCubit>().recordAttendance(record);
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        await prefs.setBool('checkedIn', true);
+        print(
+          'InsertedIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII',
+        );
         GoRouter.of(context).push(AppRouter.kSuccessView);
       } else {
         // Show result with Snackbar
-        FaceService.showFaceRecognitionResult(context, result);
+        FaceRecognitionService.showFaceRecognitionResult(context, result);
       }
     } catch (e) {
       print('Error taking picture: $e');
