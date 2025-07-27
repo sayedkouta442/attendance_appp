@@ -1,3 +1,5 @@
+import 'package:attendance_appp/core/utils/constants.dart';
+import 'package:attendance_appp/core/utils/pop_arrow.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,23 +12,23 @@ class LeaveView extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              GoRouter.of(context).pop();
-            },
-          ),
+          leading: PopArrow(),
           title: const Text('Leave '),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
+            padding: EdgeInsets.only(top: 20),
+            dividerColor: Colors.transparent,
+            indicatorColor: primaryColor,
+            labelColor: primaryColor,
             tabs: [
               Tab(text: 'Leave Request'),
               Tab(text: 'Leave Status'),
             ],
           ),
         ),
-        body: const TabBarView(
-          children: [LeaveRequestForm(), LeaveStatusList()],
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+          child: TabBarView(children: [LeaveRequestForm(), LeaveStatusList()]),
         ),
       ),
     );
