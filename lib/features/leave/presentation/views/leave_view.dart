@@ -1,6 +1,9 @@
 import 'package:attendance_appp/core/utils/constants.dart';
 import 'package:attendance_appp/core/utils/pop_arrow.dart';
+import 'package:attendance_appp/features/leave/data/models/leave_model.dart';
+import 'package:attendance_appp/features/leave/presentation/view_model/cubit/leave_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -47,7 +50,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
   final TextEditingController _reason = TextEditingController();
-  String? leaveReason = '';
+  String? leaveType = '';
   final _formKey = GlobalKey<FormState>();
 
   DateTime? _fromDate;
@@ -126,7 +129,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
               ],
 
               onChanged: (value) {
-                leaveReason = value;
+                leaveType = value;
               },
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -211,22 +214,58 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  final leave = LeaveModel(
+                    employeeId: userId,
+                    leaveType: leaveType ?? '',
+                    fromDate: DateFormat(
+                      'dd/MM/yyyy',
+                    ).parse(_fromDateController.text),
+                    toDate: DateFormat(
+                      'dd/MM/yyyy',
+                    ).parse(_toDateController.text),
+
+                    reason: _reason.text,
+                  );
                   // supmit request
 
-                  //
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Leave Request Submitted Successfuly'),
-                    ),
-                  );
+                  try {
+                    await context.read<LeaveCubit>().leaveRequest(leave);
+
+                    showDialog(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Leave Request Submitted'),
+                        content: const Text(
+                          'Your request has been sent. Please wait for the admin response.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              GoRouter.of(context).pop();
+                              GoRouter.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Submission failed: $e')),
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: const Text('Submit Request'),
+              child: context.read<LeaveCubit>().state is! LeaveLoading
+                  ? Text('Submit Request')
+                  : Center(child: CircularProgressIndicator()),
             ),
           ],
         ),

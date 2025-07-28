@@ -7,6 +7,9 @@ import 'package:attendance_appp/features/auth/data/data_sources/auth_remote_data
 import 'package:attendance_appp/features/auth/data/repos_imple/repos_impl.dart';
 import 'package:attendance_appp/features/auth/presentation/view_model/auth_cubit/auth_cubit.dart';
 import 'package:attendance_appp/features/auth/presentation/views/login_view.dart';
+import 'package:attendance_appp/features/leave/data/apis/leave_remote_data_source.dart';
+import 'package:attendance_appp/features/leave/data/repos/leave_repo.dart';
+import 'package:attendance_appp/features/leave/presentation/view_model/cubit/leave_cubit.dart';
 import 'package:attendance_appp/features/record_attendance/data/data_sources/attendance_remote_data_source.dart';
 import 'package:attendance_appp/features/record_attendance/data/repos_impl/record_attendance_repo_impl.dart';
 import 'package:attendance_appp/features/record_attendance/presentation/view_model/cubit/record_attendance_cubit.dart';
@@ -18,7 +21,7 @@ import 'package:attendance_appp/features/notifications/presentation/views/notifi
 import 'package:attendance_appp/features/user/data/apis/user_remote_data_source.dart';
 import 'package:attendance_appp/features/user/data/repos/user_repo_impl.dart';
 import 'package:attendance_appp/features/user/presentation/view_models/cubit/user_cubit.dart';
-import 'package:attendance_appp/features/user/presentation/views/leave_view.dart';
+import 'package:attendance_appp/features/leave/presentation/views/leave_view.dart';
 import 'package:attendance_appp/features/user/presentation/views/user_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -154,7 +157,14 @@ abstract class AppRouter {
         path: kSuccessView,
         builder: (context, state) => const SuccessView(),
       ),
-      GoRoute(path: kLeaveView, builder: (context, state) => const LeaveView()),
+      GoRoute(
+        path: kLeaveView,
+        builder: (context, state) => BlocProvider(
+          create: (context) =>
+              LeaveCubit(LeaveRepoImpl(LeaveRemoteDateSourceImpl())),
+          child: const LeaveView(),
+        ),
+      ),
     ],
   );
 }

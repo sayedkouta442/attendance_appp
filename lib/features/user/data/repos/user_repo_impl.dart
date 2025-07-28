@@ -1,5 +1,6 @@
 import 'package:attendance_appp/core/errors/failures.dart';
 import 'package:attendance_appp/features/user/data/apis/user_remote_data_source.dart';
+import 'package:attendance_appp/features/leave/data/models/leave_model.dart';
 import 'package:attendance_appp/features/user/data/models/user_model.dart';
 import 'package:dartz/dartz.dart';
 
