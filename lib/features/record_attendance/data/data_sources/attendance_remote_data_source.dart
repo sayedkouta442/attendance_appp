@@ -32,13 +32,13 @@ class RecordAttendanceRemoteDataSourceImpl
   @override
   Future<void> updateAttendance(AttendanceRecordModel record) async {
     try {
-      final today_date = DateTime.now().toIso8601String().split("T")[0];
+      final todayDate = DateTime.now().toIso8601String().split("T")[0];
 
       final response = await client
           .from('attendance_records')
           .update(record.toUpdateJson())
           .eq('employee_id', record.employeeId)
-          .eq('record_date', today_date)
+          .eq('record_date', todayDate)
           .isFilter('check_out_time', null);
 
       // Add detailed debugging

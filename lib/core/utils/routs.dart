@@ -1,4 +1,7 @@
 import 'package:attendance_appp/bottom_navigation_widget.dart';
+import 'package:attendance_appp/features/atten_history/data/data_sources/attendance_history_remote_data_source.dart';
+import 'package:attendance_appp/features/atten_history/data/repos/attendance_history_repo.dart';
+import 'package:attendance_appp/features/atten_history/presentation/view_model/cubit/attendance_history_cubit.dart';
 import 'package:attendance_appp/features/atten_history/presentation/views/attendance_history.dart';
 import 'package:attendance_appp/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:attendance_appp/features/auth/data/repos_imple/repos_impl.dart';
@@ -69,7 +72,14 @@ abstract class AppRouter {
               GoRoute(
                 path: kHomeView,
                 builder: (context, state) {
-                  return HomeView();
+                  return BlocProvider(
+                    create: (context) => AttendanceHistoryCubit(
+                      AttendanceHistoryRepoImpl(
+                        AttendanceHistoryRemoteDataSourceImpl(),
+                      ),
+                    ),
+                    child: HomeView(),
+                  );
                 },
               ),
             ],
@@ -79,7 +89,14 @@ abstract class AppRouter {
               GoRoute(
                 path: kAttendanceHistoryView,
                 builder: (context, state) {
-                  return AttendanceHistory();
+                  return BlocProvider(
+                    create: (context) => AttendanceHistoryCubit(
+                      AttendanceHistoryRepoImpl(
+                        AttendanceHistoryRemoteDataSourceImpl(),
+                      ),
+                    ),
+                    child: AttendanceHistoryView(),
+                  );
                 },
               ),
             ],
