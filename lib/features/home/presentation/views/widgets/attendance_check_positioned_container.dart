@@ -1,3 +1,4 @@
+import 'package:attendance_appp/core/utils/notifier.dart';
 import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:attendance_appp/features/home/presentation/views/widgets/check_time.dart';
 import 'package:attendance_appp/features/record_attendance/data/models/attendance_time_service.dart';
@@ -10,11 +11,12 @@ class AttendanceCheckPositionedContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Positioned(
       child: Container(
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDarkMode ? Colors.black.withOpacity(.5) : Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
         margin: const EdgeInsets.only(top: 220, left: 18, right: 18),
@@ -35,24 +37,33 @@ class AttendanceCheckPositionedContainer extends StatelessWidget {
 
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
+                  horizontal: 20,
                   vertical: 30,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Expanded(
-                      child: CheckTime(time: '10:00 AM', type: 'Check In'),
+                      child: CheckTime(
+                        time: '10:00 AM',
+                        type: 'Check In',
+                        color: Colors.green,
+                      ),
                     ),
-                    SizedBox(width: 16),
+                    SizedBox(width: 12),
                     Expanded(
-                      child: CheckTime(time: '06:00 BM', type: 'Check Out'),
+                      child: CheckTime(
+                        time: '06:00 BM',
+                        type: 'Check Out',
+                        color: Colors.red,
+                      ),
                     ),
-                    SizedBox(width: 16),
+                    SizedBox(width: 12),
                     Expanded(
                       child: CheckTime(
                         time: '08:00:00',
                         type: 'working Hour\'s',
+                        color: Colors.orange,
                       ),
                     ),
                   ],
@@ -77,7 +88,8 @@ class CheckInOutButton extends StatefulWidget {
 class _CheckInOutButtonState extends State<CheckInOutButton> {
   @override
   void initState() {
-    // _deleteBox();
+    //_deleteBox();
+    // _getCheckInStatus();
     super.initState();
   }
 
@@ -86,10 +98,10 @@ class _CheckInOutButtonState extends State<CheckInOutButton> {
     prefs.remove('checkedIn');
   }
 
-  Future<bool> _getCheckInStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('checkedIn') ?? false;
-  }
+  // Future<bool> _getCheckInStatus() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   return prefs.getBool('checkedIn') ?? false;
+  // }
 
   void _handleButtonLogic(BuildContext context) {
     final now = DateTime.now();
@@ -125,11 +137,9 @@ class _CheckInOutButtonState extends State<CheckInOutButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _getCheckInStatus(),
-      builder: (context, snapshot) {
-        final isChecked = snapshot.data ?? false;
-
+    return ValueListenableBuilder<bool>(
+      valueListenable: checkInNotifier,
+      builder: (context, isChecked, _) {
         return ElevatedButton(
           style: ButtonStyle(
             padding: const WidgetStatePropertyAll(

@@ -5,6 +5,7 @@ class CheckLocationHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Image.asset(
@@ -19,7 +20,7 @@ class CheckLocationHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: isDarkMode ? Colors.white : Colors.black,
             ),
             textAlign: TextAlign.center,
           ),

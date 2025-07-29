@@ -81,7 +81,7 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
       children: [
         const Text(
           'Attendance', // تم تغيير النص ليكون أكثر عمومية
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         InkWell(
           onTap: () => _selectMonth(context),

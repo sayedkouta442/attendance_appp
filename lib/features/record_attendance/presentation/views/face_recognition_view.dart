@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:attendance_appp/core/utils/constants.dart';
+import 'package:attendance_appp/core/utils/notifier.dart';
 import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:attendance_appp/features/record_attendance/data/data_sources/attendance_remote_data_source.dart';
 import 'package:attendance_appp/features/record_attendance/data/models/record_attendance.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:path_provider/path_provider.dart';
@@ -132,9 +133,7 @@ class _FaceRecognitionViewState extends State<FaceRecognitionView> {
           );
 
           await prefs.setBool('checkedIn', false);
-          print(
-            'Updated*********DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD',
-          );
+          checkInNotifier.value = false;
           GoRouter.of(context).push(AppRouter.kSuccessView);
 
           return;
@@ -150,12 +149,13 @@ class _FaceRecognitionViewState extends State<FaceRecognitionView> {
         );
         // ignore: use_build_context_synchronously
         await context.read<RecordAttendanceCubit>().recordAttendance(record);
-
-        ///////////////////////////////////////////////////////////////////////////////////
         await prefs.setBool('checkedIn', true);
-        print(
-          'InsertedIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII',
-        );
+        checkInNotifier.value = true;
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        await prefs.setBool('checkedIn', true);
+        checkInNotifier.value = true;
+
         GoRouter.of(context).push(AppRouter.kSuccessView);
       } else {
         // Show result with Snackbar
@@ -163,12 +163,15 @@ class _FaceRecognitionViewState extends State<FaceRecognitionView> {
       }
     } catch (e) {
       print('Error taking picture: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error when take picture: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error when take picture: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() {

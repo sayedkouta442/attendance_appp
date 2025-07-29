@@ -19,8 +19,14 @@ final class LeaveFailure extends LeaveState {
   List<Object> get props => [errMessage];
 }
 
-final class LeaveSuccess extends LeaveState {
+final class LeaveRequestSuccess extends LeaveState {
   final LeaveModel leaveRequestModel;
 
-  const LeaveSuccess(this.leaveRequestModel);
+  const LeaveRequestSuccess(this.leaveRequestModel);
+}
+
+final class LeaveStatusSuccess extends LeaveState {
+  final List<LeaveModel> leave;
+
+  const LeaveStatusSuccess(this.leave);
 }

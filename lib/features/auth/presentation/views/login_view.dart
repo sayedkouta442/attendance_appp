@@ -34,7 +34,7 @@ class _LoginViewState extends State<LoginView> {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xff161d38) : Colors.white,
+      //    backgroundColor: isDarkMode ? const Color(0xff161d38) : Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -91,7 +91,7 @@ class _LoginViewState extends State<LoginView> {
                           const Center(child: CircularProgressIndicator()),
                     );
                   } else if (state is AuthSuccess) {
-                    Navigator.pop(context); // Close the loading dialog
+                    (context).pop; // Close the loading dialog
                     final prefs = await SharedPreferences.getInstance();
                     prefs.setBool('requirePostSignupLogin', false);
                     GoRouter.of(context).go(AppRouter.kHomeView);
@@ -108,7 +108,7 @@ class _LoginViewState extends State<LoginView> {
                 builder: (context, state) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      //  backgroundColor: Colors.blue,
                       minimumSize: const Size(200, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),

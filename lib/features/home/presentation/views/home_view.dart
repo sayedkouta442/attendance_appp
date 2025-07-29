@@ -11,7 +11,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffeef0f2),
+      // backgroundColor: Color(0xffeef0f2),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -25,7 +25,7 @@ class HomeView extends StatelessWidget {
             floating: false,
             snap: false,
             stretch: true,
-            backgroundColor: Color(0xffeef0f2),
+            //     backgroundColor: Color(0xffeef0f2),
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: CustomAppBar(),

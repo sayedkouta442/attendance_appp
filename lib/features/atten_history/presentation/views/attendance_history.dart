@@ -1,11 +1,9 @@
-import 'package:attendance_appp/core/utils/pop_arrow.dart';
-
-import 'package:attendance_appp/features/atten_history/presentation/view_model/cubit/attendance_history_cubit.dart';
-import 'package:attendance_appp/features/atten_history/presentation/views/widgets/attendacne_list_view_item.dart';
+import 'package:attendance_appp/features/atten_history/presentation/views/widgets/attendance_history_bloc_builder.dart';
 
 import 'package:attendance_appp/features/home/presentation/views/widgets/attendance_this_month.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:go_router/go_router.dart';
 
 class AttendanceHistoryView extends StatelessWidget {
   const AttendanceHistoryView({super.key});
@@ -13,16 +11,28 @@ class AttendanceHistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50, // لون خلفية مشابه للتصميم
+      //  backgroundColor: Colors.grey.shade50, // لون خلفية مشابه للتصميم
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: Colors.grey.shade50,
+            //    backgroundColor: Colors.grey.shade50,
+            // systemOverlayStyle: SystemUiOverlayStyle(
+            //   statusBarBrightness: Brightness.light,
+            //   statusBarColor: ,
+            // ),
             surfaceTintColor: Colors.grey.shade50,
             expandedHeight: 160,
             pinned: true,
-            title: const Text('Attendance History'),
-            leading: const PopArrow(),
+            title: const Text(
+              'Attendance History',
+              style: TextStyle(fontSize: 18),
+            ),
+            leading: IconButton(
+              onPressed: () {
+                StatefulNavigationShell.of(context).goBranch(0);
+              },
+              icon: Icon(Icons.arrow_back_ios),
+            ),
             centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
@@ -34,53 +44,13 @@ class AttendanceHistoryView extends StatelessWidget {
               ),
             ),
           ),
-          BlocBuilder<AttendanceHistoryCubit, AttendanceHistoryState>(
-            builder: (context, state) {
-              if (state is AttendanceHistoryLoading) {
-                return const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              } else if (state is AttendanceHistorySuccess) {
-                if (state.attendance.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(
-                      child: Text(
-                        'No attendance records found for this month.',
-                      ),
-                    ),
-                  );
-                }
-                // 2. استخدام الويدجت الجديد هنا
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final record = state.attendance[index];
-                    return AttendanceListItem(record: record);
-                  }, childCount: state.attendance.length),
-                );
-              } else if (state is AttendanceHistoryFailure) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Failed to load data: ${state.errMessage}',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                );
-              } else {
-                return const SliverFillRemaining(
-                  child: Center(child: Text('Select a month to view history.')),
-                );
-              }
-            },
-          ),
+          AttendanceHistoryBlocBuilder(),
         ],
       ),
     );
   }
 }
+
 
 
 

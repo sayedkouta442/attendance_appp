@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
 class CheckTime extends StatelessWidget {
-  const CheckTime({super.key, required this.time, required this.type});
+  const CheckTime({
+    super.key,
+    required this.time,
+    required this.type,
+    required this.color,
+  });
   final String time;
   final String type;
+  final Color color;
   @override
   Widget build(BuildContext context) {
+    //  bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -13,7 +20,11 @@ class CheckTime extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           time, //  '10:00 AM',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color, //isDarkMode ? Colors.white : Colors.black,
+          ),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           textAlign: TextAlign.center,

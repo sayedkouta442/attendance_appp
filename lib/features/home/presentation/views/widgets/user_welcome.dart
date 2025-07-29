@@ -6,7 +6,7 @@ class UserWelcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Welcome, Sayed ',
+      'Welcome, Sayed ', // fetch from ...
       style: TextStyle(
         fontSize: 26,
         fontWeight: FontWeight.bold,

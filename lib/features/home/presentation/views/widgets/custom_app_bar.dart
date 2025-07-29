@@ -23,7 +23,7 @@ class CustomAppBar extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    GestureDetector(onTap: () {}, child: LocationIcon()),
+                    LocationIcon(),
                     SizedBox(width: 8),
                     Expanded(flex: 4, child: UserLocation()),
                     Spacer(),

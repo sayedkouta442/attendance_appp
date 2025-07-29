@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 
 abstract class LeaveRepo {
   Future<Either<Failure, void>> leaveRequest(LeaveModel leave);
+  Future<Either<Failure, List<LeaveModel>>> leaveStatus();
 }
 
 class LeaveRepoImpl extends LeaveRepo {
@@ -15,6 +16,16 @@ class LeaveRepoImpl extends LeaveRepo {
   Future<Either<Failure, void>> leaveRequest(LeaveModel leave) async {
     try {
       var result = await leaveRemoteDateSource.leaveRequest(leave);
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<LeaveModel>>> leaveStatus() async {
+    try {
+      var result = await leaveRemoteDateSource.leaveStatus();
       return Right(result);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

@@ -21,10 +21,10 @@ class AttendanceHistoryCubit extends Cubit<AttendanceHistoryState> {
       final attendanceRecords = await _attendanceHistoryRepo
           .fetchAttendanceRecords(month, year);
       // في حالة النجاح، قم بإصدار حالة النجاح مع البيانات
-      emit(AttendanceHistorySuccess(attendanceRecords));
+      if (!isClosed) emit(AttendanceHistorySuccess(attendanceRecords));
     } catch (e) {
-      // في حالة حدوث خطأ، قم بإصدار حالة الفشل مع رسالة الخطأ
-      emit(AttendanceHistoryFailure(e.toString()));
+      //
+      if (!isClosed) emit(AttendanceHistoryFailure(e.toString()));
     }
   }
 }

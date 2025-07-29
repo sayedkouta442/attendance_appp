@@ -1,3 +1,4 @@
+import 'package:attendance_appp/core/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -51,10 +52,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
 
         fillColor: isDarkMode
-            ? Colors.white.withOpacity(.03)
+            ? Colors.white.withOpacity(.07)
             : Colors.black.withOpacity(.03),
         filled: true,
-        prefixIcon: Icon(widget.prefixIcon, color: Colors.blue),
+        prefixIcon: Icon(widget.prefixIcon, color: primaryColor),
 
         hintText: widget.hintText,
         suffixIcon: widget.hintText.toLowerCase().contains("password")
@@ -73,8 +74,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         contentPadding: EdgeInsets.all(20),
         hintStyle: TextStyle(
           color: isDarkMode
-              ? Colors.white.withOpacity(.3)
-              : Colors.black.withOpacity(.3),
+              ? Colors.white.withOpacity(.7)
+              : Colors.black.withOpacity(.5),
         ),
       ),
     );

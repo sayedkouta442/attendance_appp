@@ -7,7 +7,6 @@ class AttendanceListItem extends StatelessWidget {
 
   const AttendanceListItem({super.key, required this.record});
 
-  // ... (جميع الدوال المساعدة _formatDate, _formatTime, _formatWorkingHours تبقى كما هي) ...
   String _formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'No Date';
     try {
@@ -77,12 +76,12 @@ class AttendanceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAbsent = record.checkInTime == null;
-
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? Colors.black.withOpacity(.5) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -112,10 +111,10 @@ class AttendanceListItem extends StatelessWidget {
                   children: [
                     Text(
                       _formatDate(record.recordDate.toString()),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: isDarkMode ? Colors.white : Colors.black87,
                       ),
                     ),
                     // كلمة "Absent" على اليمين باللون الأحمر
@@ -137,10 +136,10 @@ class AttendanceListItem extends StatelessWidget {
                   children: [
                     Text(
                       _formatDate(record.recordDate.toString()),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: isDarkMode ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 16),

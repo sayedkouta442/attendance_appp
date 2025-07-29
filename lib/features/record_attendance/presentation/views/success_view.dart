@@ -1,6 +1,7 @@
 import 'package:attendance_appp/core/utils/routs.dart';
 import 'package:attendance_appp/features/home/presentation/views/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class SuccessView extends StatelessWidget {
@@ -17,8 +18,12 @@ class SuccessView extends StatelessWidget {
     final time = "${now.hour}:${now.minute.toString().padLeft(2, '0')}";
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      //  backgroundColor: Colors.white,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.green,
+          statusBarIconBrightness: Brightness.light,
+        ),
         centerTitle: true,
         title: const Text(
           "Attendance Confirmation",
@@ -71,7 +76,7 @@ class SuccessView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                //   color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey.shade300),
               ),
@@ -91,7 +96,7 @@ class SuccessView extends StatelessWidget {
                         "Date: $date",
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.black87,
+                          //  color: Colors.black87,
                         ),
                       ),
                     ],
@@ -110,7 +115,7 @@ class SuccessView extends StatelessWidget {
                         "Time: $time",
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.black87,
+                          //  color: Colors.black87,
                         ),
                       ),
                     ],

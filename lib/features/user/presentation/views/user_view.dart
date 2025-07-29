@@ -1,10 +1,16 @@
 import 'package:attendance_appp/core/utils/constants.dart';
 import 'package:attendance_appp/core/utils/routs.dart';
+import 'package:attendance_appp/core/utils/themes/text_theme.dart';
+import 'package:attendance_appp/core/utils/themes/theme_controller.dart';
+import 'package:attendance_appp/features/user/data/models/user_model.dart';
 import 'package:attendance_appp/features/user/presentation/view_models/cubit/user_cubit.dart';
+import 'package:attendance_appp/features/user/presentation/views/widgets/user_image.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserView extends StatefulWidget {
   const UserView({super.key});
@@ -20,8 +26,11 @@ class _UserViewState extends State<UserView> {
     super.initState();
   }
 
+  bool isLocationEnabled = false;
+
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
       body: SingleChildScrollView(
@@ -45,32 +54,10 @@ class _UserViewState extends State<UserView> {
                       .toLocal()
                       .toString()
                       .split(' ')[0];
-                  print('User data fetched: ${user.fullName}');
+                  //   print('User data fetched: ${user.fullName}');
                   return Column(
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        child: CachedNetworkImage(
-                          imageBuilder: (context, imageProvider) =>
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundImage: imageProvider,
-                              ),
-                          fit: BoxFit.cover,
-                          imageUrl: user.imageUrl ?? '',
-                          errorWidget: (context, url, error) {
-                            return CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.grey[300],
-                              child: const Icon(Icons.person, size: 50),
-                            );
-                          },
-                          placeholder: (context, url) => const CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.grey,
-                          ),
-                        ),
-                      ),
+                      UerImage(user: user),
                       const SizedBox(height: 12),
                       Text(
                         user.fullName,
@@ -86,10 +73,7 @@ class _UserViewState extends State<UserView> {
                       const Divider(height: 32),
 
                       // User info
-                      _buildInfoTile(title: 'Email', value: user.email),
-                      _buildInfoTile(title: 'Phone', value: user.phoneNumber),
-                      _buildInfoTile(title: 'Join Date', value: formattedDate),
-                      _buildInfoTile(title: 'Branch', value: user.branch),
+                      userInfo(user, formattedDate),
                     ],
                   );
                 } else {
@@ -106,42 +90,54 @@ class _UserViewState extends State<UserView> {
             //   title: 'Change Language',
             //   onTap: () {},
             // ),
-            _buildSettingsItem(
-              icon: Icons.logout_sharp,
-              title: 'Leave ',
-              onTap: () {
-                GoRouter.of(context).push(AppRouter.kLeaveView);
+            // _buildSettingsItem(
+            //   icon: Icons.logout_sharp,
+            //   title: 'Leave ',
+            //   onTap: () {
+            //     GoRouter.of(context).push(AppRouter.kLeaveView);
+            //   },
+            // ),
+            ThemeToggleSwitch(
+              //    title: 'Location',
+              subTitle: 'Dark Theme',
+              value: themeController.isDarkMode(context),
+              onChanged: (isDark) {
+                themeController.toggleTheme(isDark);
               },
             ),
-            _buildSettingsItem(
-              icon: Icons.notifications_active_rounded,
-              title: 'Notification Settings',
-              onTap: () {},
-            ),
-            // _buildSettingsItem(
-            //   icon: Icons.dark_mode_outlined,
-            //   title: 'Dark Mode',
-            //   onTap: () {},
-            // ),
-            _buildSettingsItem(
-              icon: Icons.location_on_outlined,
-              title: 'Update Location',
-              onTap: () {},
-            ),
+            ThemeToggleSwitch(
+              //    title: 'Location',
+              subTitle: 'Update Your Location',
+              value: isLocationEnabled,
+              onChanged: (value) async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('location');
 
-            const SizedBox(height: 24),
+                setState(() => isLocationEnabled = value);
+              },
+            ),
+            const SizedBox(height: 16),
 
             // Logout
-            ElevatedButton.icon(
-              onPressed: () {
-                client.auth.signOut();
-                GoRouter.of(context).go('/');
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Logout'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      await client.auth.signOut();
+                      if (!context.mounted) return;
+                      GoRouter.of(context).go('/');
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Logout'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  Spacer(),
+                ],
               ),
             ),
           ],
@@ -150,11 +146,38 @@ class _UserViewState extends State<UserView> {
     );
   }
 
-  Widget _buildInfoTile({required String title, required String value}) {
+  Column userInfo(UserModel user, String formattedDate) {
+    return Column(
+      children: [
+        _buildInfoTile(title: 'Email', value: user.email, icons: Icons.email),
+        _buildInfoTile(
+          title: 'Phone',
+          value: user.phoneNumber,
+          icons: Icons.phone,
+        ),
+        _buildInfoTile(
+          title: 'Join Date',
+          value: formattedDate,
+          icons: Icons.date_range,
+        ),
+        _buildInfoTile(
+          title: 'Branch',
+          value: user.branch,
+          icons: Icons.location_city,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoTile({
+    required String title,
+    required String value,
+    required IconData icons,
+  }) {
     return ListTile(
       title: Text(title),
       subtitle: Text(value),
-      leading: const Icon(Icons.info_outline),
+      leading: Icon(icons),
     );
   }
 
@@ -168,6 +191,77 @@ class _UserViewState extends State<UserView> {
       title: Text(title),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
+    );
+  }
+}
+
+class ThemeToggleSwitch extends StatefulWidget {
+  const ThemeToggleSwitch({
+    super.key,
+    // required this.title,
+    required this.subTitle,
+    required this.value,
+    required this.onChanged,
+  });
+
+  // final String title;
+  final String subTitle;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  State<ThemeToggleSwitch> createState() => _ThemeToggleSwitchState();
+}
+
+class _ThemeToggleSwitchState extends State<ThemeToggleSwitch> {
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textTheme = isDarkMode
+        ? CTextTheme.darkTextTheme
+        : CTextTheme.lightTextTheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            widget.subTitle,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+              fontFamily: 'Montserrat',
+            ),
+          ),
+          GestureDetector(
+            onTap: () => setState(() {
+              widget.onChanged(!widget.value);
+            }),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 60,
+              height: 30,
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: widget.value ? Colors.green : Colors.grey,
+                borderRadius: BorderRadius.circular(34),
+              ),
+              alignment: widget.value
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+              child: Container(
+                width: 26,
+                height: 26,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
