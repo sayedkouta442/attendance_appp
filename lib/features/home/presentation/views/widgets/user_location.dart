@@ -37,7 +37,7 @@ class _UserLocationState extends State<UserLocation> {
         Text('Location', style: TextStyle(fontSize: 16, color: Colors.white)),
         SizedBox(height: 2),
         Text(
-          '${userLocation}' ?? '',
+          userLocation.toString(),
           style: TextStyle(
             fontSize: 18,
             color: Colors.white,

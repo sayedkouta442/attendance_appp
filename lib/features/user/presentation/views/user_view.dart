@@ -32,7 +32,10 @@ class _UserViewState extends State<UserView> {
   Widget build(BuildContext context) {
     final themeController = Provider.of<ThemeController>(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Profile', style: TextStyle(fontSize: 24)),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -84,19 +87,6 @@ class _UserViewState extends State<UserView> {
 
             const Divider(height: 32),
 
-            // Settings
-            // _buildSettingsItem(
-            //   icon: Icons.language,
-            //   title: 'Change Language',
-            //   onTap: () {},
-            // ),
-            // _buildSettingsItem(
-            //   icon: Icons.logout_sharp,
-            //   title: 'Leave ',
-            //   onTap: () {
-            //     GoRouter.of(context).push(AppRouter.kLeaveView);
-            //   },
-            // ),
             ThemeToggleSwitch(
               //    title: 'Location',
               subTitle: 'Dark Theme',
@@ -105,6 +95,7 @@ class _UserViewState extends State<UserView> {
                 themeController.toggleTheme(isDark);
               },
             ),
+            const SizedBox(height: 16),
             ThemeToggleSwitch(
               //    title: 'Location',
               subTitle: 'Update Your Location',

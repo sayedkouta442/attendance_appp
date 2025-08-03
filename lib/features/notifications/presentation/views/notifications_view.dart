@@ -1,3 +1,4 @@
+import 'package:attendance_appp/core/common/page_title.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,7 +9,7 @@ class NotificationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const PageTitle(title: 'Notifications'),
         centerTitle: true,
 
         leading: IconButton(

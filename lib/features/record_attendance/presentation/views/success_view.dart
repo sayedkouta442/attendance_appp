@@ -1,5 +1,5 @@
 import 'package:attendance_appp/core/utils/routs.dart';
-import 'package:attendance_appp/features/home/presentation/views/home_view.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +27,7 @@ class SuccessView extends StatelessWidget {
         centerTitle: true,
         title: const Text(
           "Attendance Confirmation",
-          style: TextStyle(fontWeight: FontWeight.w500),
+          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
         ),
         backgroundColor: Colors.green,
         automaticallyImplyLeading: false, // Remove back button

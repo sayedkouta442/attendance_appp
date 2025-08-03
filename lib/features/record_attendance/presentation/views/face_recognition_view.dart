@@ -226,7 +226,16 @@ class _FaceRecognitionViewState extends State<FaceRecognitionView> {
                     ),
                   ),
                   child: isProcessing
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? Center(
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: const CircularProgressIndicator(
+                              //  padding: EdgeInsets.all(16),
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
                       : const Text(
                           'Take picture for recognition',
                           style: TextStyle(fontSize: 18),

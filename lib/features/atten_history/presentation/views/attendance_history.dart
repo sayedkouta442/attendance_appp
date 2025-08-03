@@ -1,3 +1,4 @@
+import 'package:attendance_appp/core/common/page_title.dart';
 import 'package:attendance_appp/features/atten_history/presentation/views/widgets/attendance_history_bloc_builder.dart';
 
 import 'package:attendance_appp/features/home/presentation/views/widgets/attendance_this_month.dart';
@@ -23,10 +24,7 @@ class AttendanceHistoryView extends StatelessWidget {
             surfaceTintColor: Colors.grey.shade50,
             expandedHeight: 160,
             pinned: true,
-            title: const Text(
-              'Attendance History',
-              style: TextStyle(fontSize: 18),
-            ),
+            title: PageTitle(title: "Attendance History"),
             leading: IconButton(
               onPressed: () {
                 StatefulNavigationShell.of(context).goBranch(0);
