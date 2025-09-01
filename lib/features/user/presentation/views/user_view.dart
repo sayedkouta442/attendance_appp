@@ -1,11 +1,11 @@
 import 'package:attendance_appp/core/utils/constants.dart';
-import 'package:attendance_appp/core/utils/routs.dart';
+
 import 'package:attendance_appp/core/utils/themes/text_theme.dart';
 import 'package:attendance_appp/core/utils/themes/theme_controller.dart';
 import 'package:attendance_appp/features/user/data/models/user_model.dart';
 import 'package:attendance_appp/features/user/presentation/view_models/cubit/user_cubit.dart';
 import 'package:attendance_appp/features/user/presentation/views/widgets/user_image.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

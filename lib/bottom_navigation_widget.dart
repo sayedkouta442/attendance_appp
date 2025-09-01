@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-// هذا هو الكود الذي يجب أن يكون في ملف bottom_navigation.dart
-
 class BottomNavigation extends StatelessWidget {
   /// The navigation shell that contains the state for the shell route.
   final StatefulNavigationShell navigationShell;

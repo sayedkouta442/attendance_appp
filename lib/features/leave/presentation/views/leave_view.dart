@@ -1,13 +1,9 @@
 import 'package:attendance_appp/core/utils/constants.dart';
 import 'package:attendance_appp/core/utils/pop_arrow.dart';
-import 'package:attendance_appp/features/leave/data/models/leave_model.dart';
-import 'package:attendance_appp/features/leave/presentation/view_model/cubit/leave_cubit.dart';
+
 import 'package:attendance_appp/features/leave/presentation/views/widgets/leave_request.dart';
 import 'package:attendance_appp/features/leave/presentation/views/widgets/leave_status.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 class LeaveView extends StatelessWidget {
   const LeaveView({super.key});

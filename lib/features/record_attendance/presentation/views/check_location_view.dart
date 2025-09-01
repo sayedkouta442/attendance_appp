@@ -25,8 +25,7 @@ class _CheckLocationViewState extends State<CheckLocationView> {
   bool isLoading = true;
   LatLng? _currentLocation;
   final LatLng officeLocation = const LatLng(30.7860, 31.0009);
-  // LatLng? _destination;
-  // List<LatLng> _route = [];
+
   StreamSubscription<LocationData>? _locationSubscription;
   String? cityState;
 
@@ -86,12 +85,6 @@ class _CheckLocationViewState extends State<CheckLocationView> {
     return true;
   }
 
-  // void errorMessage(String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,37 +114,7 @@ class _CheckLocationViewState extends State<CheckLocationView> {
             SizedBox(height: 30),
 
             // check location button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: Color(0xff3662e1),
-              ),
-              onPressed: () async {
-                final result = await LocationService().takeAttendance(context);
-
-                if (result == true) {
-                  // ignore: use_build_context_synchronously
-                  GoRouter.of(context).push(AppRouter.kFaceIdView);
-                }
-              },
-              child: const SizedBox(
-                child: Text(
-                  'Check Location',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+            CheckLocationButton(),
           ],
         ),
       ),
@@ -159,30 +122,33 @@ class _CheckLocationViewState extends State<CheckLocationView> {
   }
 }
 
+class CheckLocationButton extends StatelessWidget {
+  const CheckLocationButton({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        textStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Color(0xff3662e1),
+      ),
+      onPressed: () async {
+        final result = await LocationService().takeAttendance(context);
 
-
-
-
-
-
-
-
-  // Future<void> _userCurrentLocation() async {
-  //   if (_currentLocation != null) {
-  //     _mapController.move(_currentLocation!, 15);
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Current location is not available.')),
-  //     );
-  //   }
-  // }
-
-
-
-     // floatingActionButton: FloatingActionButton(
-      //   elevation: 0,
-      //   onPressed: _userCurrentLocation,
-      //   backgroundColor: Colors.blue,
-      //   child: const Icon(Icons.my_location, size: 30, color: Colors.white),
-      // ),
+        if (result == true) {
+          // ignore: use_build_context_synchronously
+          GoRouter.of(context).push(AppRouter.kFaceIdView);
+        }
+      },
+      child: const SizedBox(
+        child: Text('Check Location', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+}
